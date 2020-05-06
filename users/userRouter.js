@@ -42,18 +42,26 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   let id = req.params.id;
-  db.getUserPosts(id)
+  db.getById(id)
     .then((post) => {
       res.status(200).json(post);
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ error: "cannot get user's posts" });
+      res.status(500).json({ error: "cannot get the user" });
     });
 });
 
 router.get("/:id/posts", (req, res) => {
-  // do your magic!
+  let id = req.params.id;
+  db.getUserPosts(id)
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: "can't get the posts" });
+    });
 });
 
 router.delete("/:id", (req, res) => {
