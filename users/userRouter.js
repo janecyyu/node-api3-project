@@ -1,10 +1,27 @@
 const express = require("express");
+const router = express.Router();
+const server = express();
 const db = require("./userDb");
 
-const router = express.Router();
-
+server.use(express.json());
 router.post("/", (req, res) => {
-  // do your magic!
+  // if missing name
+  // if (req.body.name === undefined) {
+  //   res.status(400).json({
+  //     errorMessage: "Please provide name.",
+  //   });
+  // }
+  console.log(req.body)
+  db.insert(req.body)
+    .then((article) => {
+      res.status(201).json(article);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({
+        error: "There was an error while saving the post to the database",
+      });
+    });
 });
 
 router.post("/:id/posts", (req, res) => {
@@ -12,7 +29,6 @@ router.post("/:id/posts", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-  // do your magic!
   db.get()
     .then((user) => {
       res.status(200).json(user);
@@ -41,8 +57,19 @@ router.put("/:id", (req, res) => {
 
 //custom middleware
 
+
 function validateUserId(req, res, next) {
-  // do your magic!
+  let id = req.headers.id;
+  if (id && typeof id === "number") {
+    id = id.toLowerCase();
+    if (id === 1) {
+      next();
+    } else {
+      res.status(401).send("cannot pass!");
+    }
+  } else {
+    res.status(404).send("speak friend and enter");
+  }
 }
 
 function validateUser(req, res, next) {
