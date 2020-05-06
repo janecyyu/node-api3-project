@@ -6,14 +6,7 @@ const postDb = require("../posts/postDb");
 
 server.use(express.json());
 
-router.post("/", (req, res) => {
-  //if missing name
-  if (req.body.name === undefined) {
-    res.status(400).json({
-      errorMessage: "Please provide name.",
-    });
-  }
-  console.log(req.body);
+router.post("/", validateUser, (req, res) => {
   db.insert(req.body)
     .then((article) => {
       res.status(201).json(article);
@@ -26,7 +19,7 @@ router.post("/", (req, res) => {
     });
 });
 
-router.post("/:id/posts", (req, res) => {
+router.post("/:id/posts", validateUserId, (req, res) => {
   postDb
     .insert(req.body)
     .then((post) => {
@@ -61,7 +54,7 @@ router.get("/:id", validateUserId, (req, res) => {
     });
 });
 
-router.get("/:id/posts", (req, res) => {
+router.get("/:id/posts", validateUserId, (req, res) => {
   let id = req.params.id;
   db.getUserPosts(id)
     .then((user) => {
@@ -73,7 +66,7 @@ router.get("/:id/posts", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validateUserId, (req, res) => {
   let id = req.params.id;
   db.remove(id)
     .then((user) => {
@@ -85,7 +78,7 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validateUserId, (req, res) => {
   let id = req.params.id;
   db.update(id, req.body)
     .then((user) => {
@@ -115,7 +108,17 @@ function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-  // do your magic!
+  //console.log(Object.keys(req.body).length);
+  if (Object.keys(req.body).length == 0) {
+    res.status(400).json({
+      errorMessage: "missing user data",
+    });
+  } else if (req.body.name === "") {
+    res.status(400).json({
+      errorMessage: "missing required name field",
+    });
+  }
+  next();
 }
 
 function validatePost(req, res, next) {
