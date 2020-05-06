@@ -41,7 +41,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  const id = req.params.id;
+  let id = req.params.id;
   db.getUserPosts(id)
     .then((post) => {
       res.status(200).json(post);
@@ -61,7 +61,15 @@ router.delete("/:id", (req, res) => {
 });
 
 router.put("/:id", (req, res) => {
-  // do your magic!
+  let id = req.params.id;
+  db.update(id, req.body)
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: "can't update user" });
+    });
 });
 
 //custom middleware
