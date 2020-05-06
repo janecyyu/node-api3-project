@@ -1,10 +1,10 @@
 const express = require("express");
-const router = require("./users/userRouter");
+const userRouter = require("./users/userRouter");
 
 const server = express();
 server.use(express.json());
 server.use(logger);
-server.use("/", router);
+server.use("/users", userRouter);
 
 //custom middleware
 
