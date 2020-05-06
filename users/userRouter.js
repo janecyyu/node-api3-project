@@ -4,14 +4,15 @@ const server = express();
 const db = require("./userDb");
 
 server.use(express.json());
+
 router.post("/", (req, res) => {
-  // if missing name
-  // if (req.body.name === undefined) {
-  //   res.status(400).json({
-  //     errorMessage: "Please provide name.",
-  //   });
-  // }
-  console.log(req.body)
+  //if missing name
+  if (req.body.name === undefined) {
+    res.status(400).json({
+      errorMessage: "Please provide name.",
+    });
+  }
+  console.log(req.body);
   db.insert(req.body)
     .then((article) => {
       res.status(201).json(article);
@@ -40,7 +41,15 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  // do your magic!
+  const id = req.params.id;
+  db.getUserPosts(id)
+    .then((post) => {
+      res.status(200).json(post);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: "cannot get user's posts" });
+    });
 });
 
 router.get("/:id/posts", (req, res) => {
@@ -56,7 +65,6 @@ router.put("/:id", (req, res) => {
 });
 
 //custom middleware
-
 
 function validateUserId(req, res, next) {
   let id = req.headers.id;
