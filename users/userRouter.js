@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const server = express();
 const db = require("./userDb");
+const postDb = require("../posts/postDb");
 
 server.use(express.json());
 
@@ -26,7 +27,15 @@ router.post("/", (req, res) => {
 });
 
 router.post("/:id/posts", (req, res) => {
-  // do your magic!
+  postDb
+    .insert(req.body)
+    .then((post) => {
+      res.status(200).json(post);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: "can't get the posts" });
+    });
 });
 
 router.get("/", (req, res) => {
