@@ -49,7 +49,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validateUserId, (req, res) => {
   let id = req.params.id;
   db.getById(id)
     .then((post) => {
@@ -100,17 +100,18 @@ router.put("/:id", (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-  let id = req.headers.id;
-  if (id && typeof id === "number") {
-    id = id.toLowerCase();
-    if (id === 1) {
-      next();
-    } else {
-      res.status(401).send("cannot pass!");
-    }
-  } else {
-    res.status(404).send("speak friend and enter");
-  }
+  let id = req.params.id;
+  db.getById(id)
+    .then((user) => {
+      if (user) {
+        next();
+      } else {
+        res.status(404).send("invalid user id");
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("something error on validate user id");
+    });
 }
 
 function validateUser(req, res, next) {
