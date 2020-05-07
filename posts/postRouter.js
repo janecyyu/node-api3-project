@@ -1,5 +1,4 @@
 const express = require("express");
-
 const router = express.Router({ mergeParams: true });
 const postDb = require("./postDb");
 
@@ -27,11 +26,25 @@ router.get("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  // do your magic!
+  postDb
+    .remove(req.params.id)
+    .then((post) => {
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      res.status(500).send("error on get this post");
+    });
 });
 
 router.put("/:id", (req, res) => {
-  // do your magic!
+  postDb
+    .update(req.params.id, req.body)
+    .then((post) => {
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      res.status(500).send("error on updating!");
+    });
 });
 
 // custom middleware
