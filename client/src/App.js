@@ -26,16 +26,20 @@ function App() {
 
   return (
     <div className="App">
-      {userList.map((u) => (
-        <div key={u.id}>
-          <button onClick={() => handleClick(u.id)}>{u.name}</button>
-        </div>
-      ))}
-      {postList.map((p) => (
-        <div>
-          <div>{p.text}</div>
-        </div>
-      ))}
+      <div className="left">
+        {userList.map((u) => (
+          <div key={u.id}>
+            <button className="btn" onClick={() => handleClick(u.id)}>{u.name}</button>
+          </div>
+        ))}
+      </div>
+      <div className="right">
+        {postList.map((p) => (
+          <div className="post" key={p.id}>
+            <div>{p.text}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
