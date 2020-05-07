@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validatePostId, (req, res) => {
   postDb
     .getById(req.params.id)
     .then((post) => {
@@ -25,7 +25,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validatePostId, (req, res) => {
   postDb
     .remove(req.params.id)
     .then((post) => {
@@ -36,11 +36,11 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id",validatePostId, (req, res) => {
   postDb
     .update(req.params.id, req.body)
     .then((post) => {
-      res.sendStatus(200);
+      res.sendStatus(200).json(post);
     })
     .catch((err) => {
       res.status(500).send("error on updating!");
@@ -50,7 +50,19 @@ router.put("/:id", (req, res) => {
 // custom middleware
 
 function validatePostId(req, res, next) {
-  // do your magic!
+  postDb
+    .getById(req.params.id)
+    .then((id) => {
+      if (id) {
+        next();
+      } else {
+        res.status(404).json("wrong post id!");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send("error on checking post id");
+    });
 }
 
 module.exports = router;
