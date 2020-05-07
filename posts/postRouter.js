@@ -36,7 +36,7 @@ router.delete("/:id", validatePostId, (req, res) => {
     });
 });
 
-router.put("/:id",validatePostId, (req, res) => {
+router.put("/:id", validatePostId, (req, res) => {
   postDb
     .update(req.params.id, req.body)
     .then((post) => {
